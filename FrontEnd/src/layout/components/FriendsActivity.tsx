@@ -12,7 +12,7 @@ const FriendsActivity = () => {
     if (user) fetchUsers()
   }, [fetchUsers, user]);
 
-  const isPlaying = true;
+  const isPlaying = false;
 
   return (
     <div className='h-full bg-zinc-900 rounded-lg flex flex-col'>
