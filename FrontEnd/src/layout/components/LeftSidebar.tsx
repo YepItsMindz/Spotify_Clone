@@ -15,8 +15,6 @@ const LeftSidebar = () => {
   useEffect(() => {
     fetchAlbums();
   }, [fetchAlbums]);
-
-  console.log({albums})
   return (
     <div className="h-full flex flex-col gap-2">
       <div className="rounded-lg bg-zinc-900 p-4">
@@ -31,7 +29,7 @@ const LeftSidebar = () => {
           </Link>
 
           <SignedIn>
-            <Link to={"/"} className={cn(buttonVariants({
+            <Link to={"/chat"} className={cn(buttonVariants({
               variant: "ghost",
               className: "w-full justify-start text-white hover:bg-zinc-800 ",
             }

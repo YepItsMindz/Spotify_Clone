@@ -41,7 +41,6 @@ const AuthCallbackPage = () => {
             <h3 className="text-zinc-400 text-x1 font-bold"> Logging you in </h3>
             <p className="text-zinc-400 text-sm"> Redirecting... </p>
           </CardContent>
-
         </Card>
     </div>
   )
