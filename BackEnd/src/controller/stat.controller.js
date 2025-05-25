@@ -35,7 +35,7 @@ export const getStats = async (req, res, next) => {
       totalSongs,
       totalAlbums,
       totalUsers,
-      uniqueAritists: uniqueAritists[0]?.count || 0
+      // uniqueAritists: uniqueAritists[0]?.count || 0
     });
 
   } catch (error) {

@@ -5,8 +5,11 @@ import FriendsActivity from './components/FriendsActivity';
 import AudioPlayer from './components/AudioPlayer';
 import PlaybackControls from './components/PlaybackControls';
 import { useEffect, useState} from 'react';
+import HistoryPanel from "./components/HistoryPanel";
+
 const MainLayout = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -37,12 +40,16 @@ const MainLayout = () => {
         
         {!isMobile && (
           <ResizablePanel defaultSize={20} minSize={isMobile ? 0 : 10} maxSize={25} collapsedSize={0}>
-            <FriendsActivity/>
+            <div className="relative h-full">
+              <div className="h-full">
+                {showHistory ? <HistoryPanel title="Recently Played" /> : <FriendsActivity />}
+              </div>
+            </div>
           </ResizablePanel>
         )}
       </ResizablePanelGroup>
 
-      <PlaybackControls/>
+      <PlaybackControls onToggleHistory={() => setShowHistory((v) => !v)} />
     </div>
   )
 }

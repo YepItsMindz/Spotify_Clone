@@ -2,13 +2,17 @@ import { usePlayerStore } from "@/stores/usePlayerStore"
 import { Song } from "@/types"
 import { Button } from "@/components/ui/button"
 import { Play, Pause } from "lucide-react"
+import { useSaveSongToHistory } from "@/lib/saveSongToHistory";
+
 const PlayButton = ({song} : {song:Song}) => {
   const {currentSong, isPlaying, setCurrentSong, togglePlay} = usePlayerStore()
   const isCurrentSong = currentSong?._id === song._id
+  const saveSongToHistory = useSaveSongToHistory();
 
   const handlePlay = () => {
     if (isCurrentSong) { togglePlay() }
     else { setCurrentSong(song) }
+    saveSongToHistory(song);
   };
 
   return (

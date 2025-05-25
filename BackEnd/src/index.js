@@ -15,6 +15,7 @@ import adminRoutes from './routes/admin.route.js';
 import songRoutes from './routes/song.route.js';
 import albumRoutes from './routes/album.route.js';
 import statRoutes from './routes/stat.route.js';
+import playlistRoutes from './routes/playlist.route.js';
 
 dotenv.config();
 const app = express();
@@ -22,7 +23,7 @@ const __dirname = path.resolve();
 const PORT = process.env.PORT;
 
 const httpServer = createServer(app);
-initializeSocket(httpServer);
+initializeSocket(httpServer, app);
 
 app.use(cors(
   {
@@ -65,6 +66,7 @@ app.use("/api/admin", adminRoutes)
 app.use("/api/songs", songRoutes)
 app.use("/api/albums", albumRoutes)
 app.use("/api/stats", statRoutes)
+app.use("/api/playlists", playlistRoutes)
 
 //error handling middleware
 app.use((err, req, res, next) => {

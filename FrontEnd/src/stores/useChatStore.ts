@@ -2,6 +2,7 @@ import { axiosInstance } from "@/lib/axios";
 import { Message, User } from "@/types";
 import { create } from "zustand";
 import { io } from "socket.io-client";
+import { useAuth } from "@clerk/clerk-react";
 
 interface ChatStore {
 	users: User[];
@@ -95,7 +96,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 				}));
 			});
 
-			socket.on("activity_updated", ({ userId, activity }) => {
+			// Fix implicit any types
+			socket.on("activity_updated", (payload: { userId: string; activity: string }) => {
+				const { userId, activity } = payload;
 				set((state) => {
 					const newActivities = new Map(state.userActivities);
 					newActivities.set(userId, activity);
@@ -124,10 +127,15 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 	fetchMessages: async (userId: string) => {
 		set({ isLoading: true, error: null });
 		try {
-			const response = await axiosInstance.get(`/users/messages/${userId}`);
+			// Get token from Clerk
+			const { getToken } = useAuth();
+			const token = await getToken();
+			const response = await axiosInstance.get(`/users/messages/${userId}`, {
+				headers: token ? { Authorization: `Bearer ${token}` } : {},
+			});
 			set({ messages: response.data });
 		} catch (error: any) {
-			set({ error: error.response.data.message });
+			set({ error: error.response?.data?.message || "Failed to fetch messages" });
 		} finally {
 			set({ isLoading: false });
 		}

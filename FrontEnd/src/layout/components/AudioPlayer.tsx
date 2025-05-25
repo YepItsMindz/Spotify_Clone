@@ -27,15 +27,22 @@ const AudioPlayer = () => {
 		if (!audioRef.current || !currentSong) return;
 
 		const audio = audioRef.current;
-
 		const isSongChange = prevSongRef.current !== currentSong?.audioUrl;
 		if (isSongChange) {
 			audio.src = currentSong?.audioUrl;
 			audio.currentTime = 0;
+			audio.load();
 
 			prevSongRef.current = currentSong?.audioUrl;
 
+			const playWhenReady = () => {
+				if (isPlaying) audio.play();
+				audio.removeEventListener('canplay', playWhenReady);
+			};
+			audio.addEventListener('canplay', playWhenReady);
+		} else {
 			if (isPlaying) audio.play();
+			else audio.pause();
 		}
 	}, [currentSong, isPlaying]);
 

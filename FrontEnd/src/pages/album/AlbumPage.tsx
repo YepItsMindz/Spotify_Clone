@@ -5,6 +5,7 @@ import { usePlayerStore } from "@/stores/usePlayerStore";
 import { Clock, Music, Play, Pause } from "lucide-react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useSaveSongToHistory } from "@/lib/saveSongToHistory";
 
 export const formatDuration = (seconds: number) => {
 	const minutes = Math.floor(seconds / 60);
@@ -16,6 +17,7 @@ const AlbumPage = () => {
 	const { albumId } = useParams();
 	const { fetchAlbumById, currentAlbum, isLoading } = useMusicStore();
 	const {currentSong, isPlaying, playAlbum, togglePlay} = usePlayerStore();
+	const saveSongToHistory = useSaveSongToHistory();
 
 	useEffect(() => {
 		if (albumId) fetchAlbumById(albumId);
@@ -31,13 +33,14 @@ const AlbumPage = () => {
 			togglePlay();
 		} else {
 			playAlbum(currentAlbum?.songs, 0);
+			if (currentAlbum?.songs[0]) saveSongToHistory(currentAlbum.songs[0]);
 		}
 	}
 
 	const handlePlaySong = (index: number) => {
 		if (!currentAlbum) return;
 		playAlbum(currentAlbum?.songs, index);
-		
+		if (currentAlbum?.songs[index]) saveSongToHistory(currentAlbum.songs[index]);
 	};
 
 	return (

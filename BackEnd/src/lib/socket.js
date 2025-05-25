@@ -1,13 +1,18 @@
 import { Server } from "socket.io";
 import { Message } from "../models/message.model.js";
 
-export const initializeSocket = (server) => {
+export const initializeSocket = (server, app) => {
 	const io = new Server(server, {
 		cors: {
 			origin: "http://localhost:3000",
 			credentials: true,
 		},
 	});
+
+	// Make io available to controllers via req.app.get('io')
+	if (app) {
+		app.set("io", io);
+	}
 
 	const userSockets = new Map(); // { userId: socketId}
 	const userActivities = new Map(); // {userId: activity}
@@ -16,6 +21,9 @@ export const initializeSocket = (server) => {
 		socket.on("user_connected", (userId) => {
 			userSockets.set(userId, socket.id);
 			userActivities.set(userId, "Idle");
+
+			// Join a room for the user for targeted events
+			socket.join(userId);
 
 			// broadcast to all connected sockets that this user just logged in
 			io.emit("user_connected", userId);

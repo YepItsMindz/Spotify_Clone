@@ -1,5 +1,6 @@
 import {Song} from '../models/song.model.js';
 import {Album} from '../models/album.model.js';
+import { ActionLog } from '../models/actionLog.model.js';
 import cloudinary from '../lib/cloudinary.js';
 
 // helper function to upload file to cloudinary
@@ -12,6 +13,20 @@ const uploadToCloudinary = async (file) => {
   } catch (error) {
     console.log("Error in uploadToCloudinary", error);
     throw new Error("Error in uploading file to cloudinary");
+  }
+};
+
+const logAdminAction = async (adminId, action, description) => {
+  try {
+    const log = new ActionLog({
+      adminId,
+      action,
+      description,
+    });
+    await log.save();
+    return true;
+  } catch (error) {
+    console.log("Error in logging admin action", error);
   }
 };
 
@@ -45,6 +60,10 @@ export const createSong = async (req, res, next) => {
         $push: { songs: song._id },
       });
     }
+
+    const adminId = req.auth.userId;
+    await logAdminAction(adminId, "CREATE", `Created song: ${title}`);
+    
     res.status(201).json(song);
   } catch (error) {
     console.log("Error in createSong", error);
@@ -65,6 +84,9 @@ export const deleteSong = async (req, res, next) => {
     };
 
     await Song.findByIdAndDelete(id);
+
+    const adminId = req.auth.userId;
+    await logAdminAction(adminId, "DELETE", `Deleted song with ID: ${id}`);
 
     res.status(200).json({ message: "Song deleted successfully" });
 
@@ -90,6 +112,9 @@ export const createAlbum = async (req, res, next) => {
 
     await album.save();
 
+    const adminId = req.auth.userId;
+    await logAdminAction(adminId, "CREATE", `Created album: ${title}`);
+
     res.status(201).json(album);
   } catch (error) {
     console.log("Error in createAlbum", error);
@@ -102,6 +127,10 @@ export const deleteAlbum = async (req, res, next) => {
     const { id } = req.params;
     await Song.deleteMany({ albumId: id });
     await Album.findByIdAndDelete(id);
+
+    const adminId = req.auth.userId;
+    await logAdminAction(adminId, "DELETE", `Deleted album with ID: ${id}`);
+
     res.status(200).json({ message: "Album deleted successfully" });
 
   } catch (error) {
@@ -110,6 +139,22 @@ export const deleteAlbum = async (req, res, next) => {
   }
 };
 
+export const getActionLog = async (req, res, next) => {
+  try {
+    const { adminId } = req.params; // Get adminId from route params
+
+    // Fetch action logs for the current admin
+    const logs = await ActionLog.find({ adminId })
+      .sort({ performedAt: -1 }) // Sort by most recent actions
+      .limit(50); // Limit to the latest 50 logs
+
+    res.status(200).json(logs);
+  } catch (error) {
+    console.log("Error in getActionLog", error);
+    next(error);
+  }
+};
+
 export const checkAdmin = async (req, res, next) => {
   res.status(200).json({ admin: true });
-}
+};

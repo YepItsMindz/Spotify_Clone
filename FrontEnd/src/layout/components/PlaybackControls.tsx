@@ -11,7 +11,7 @@ const formatTime = (seconds: number) => {
 	return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 };
 
-const PlaybackControls = () => {
+const PlaybackControls = ({ onToggleHistory }: { onToggleHistory?: () => void }) => {
   const { currentSong, isPlaying, togglePlay, playNext, playPrevious } = usePlayerStore();
   const [volume, setVolume] = useState(75);
   const [currentTime, setCurrentTime] = useState(0);
@@ -137,13 +137,13 @@ const PlaybackControls = () => {
 
 				{/* volume controls */}
 				<div className='hidden sm:flex items-center gap-4 min-w-[180px] w-[30%] justify-end'>
-					<Button size='icon' variant='ghost' className='hover:text-white text-zinc-400'>
+					{/* <Button size='icon' variant='ghost' className='hover:text-white text-zinc-400'>
 						<Mic2 className='h-4 w-4' />
-					</Button>
-					<Button size='icon' variant='ghost' className='hover:text-white text-zinc-400'>
+					</Button> */}
+					{/* <Button size='icon' variant='ghost' className='hover:text-white text-zinc-400'>
 						<ListMusic className='h-4 w-4' />
-					</Button>
-					<Button size='icon' variant='ghost' className='hover:text-white text-zinc-400'>
+					</Button> */}
+					<Button size='icon' variant='ghost' className='hover:text-white text-zinc-400' onClick={onToggleHistory}>
 						<Laptop2 className='h-4 w-4' />
 					</Button>
 
@@ -171,4 +171,4 @@ const PlaybackControls = () => {
 	);
 };
 
-export default PlaybackControls
+export default PlaybackControls;
