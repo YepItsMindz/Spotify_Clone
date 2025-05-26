@@ -54,6 +54,20 @@ export const getAllPlaylists = async (req, res, next) => {
   }
 };
 
+// Get all playlists for the current user
+export const getUserPlaylists = async (req, res, next) => {
+  try {
+    const clerkId = req.auth.userId;
+    // Find the user by clerkId to get the MongoDB _id
+    const user = await mongoose.model("User").findOne({ clerkId });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    const playlists = await Playlist.find({ userId: user._id }).sort({ createdAt: -1 });
+    res.status(200).json(playlists);
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Delete a playlist
 export const deletePlaylist = async (req, res, next) => {
   try {

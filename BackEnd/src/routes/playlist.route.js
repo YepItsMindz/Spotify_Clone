@@ -5,6 +5,7 @@ import {
   addSongToPlaylist,
   removeSongFromPlaylist,
   getAllPlaylists,
+  getUserPlaylists,
 } from "../controller/playlist.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 
@@ -24,5 +25,8 @@ router.delete("/:playlistId/songs/:songId", protectRoute, removeSongFromPlaylist
 
 // Get all playlists for the current user
 router.get("/", protectRoute, getAllPlaylists);
+
+// Get all playlists for the current user
+router.get("/user", protectRoute, getUserPlaylists);
 
 export default router;
